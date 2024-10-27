@@ -39,7 +39,7 @@ public class UserController {
 		if (userRepo.findByEmail(email).get().getUniqueId() == id) {
 			return userService.getUserById(id);
 		} else {
-			throw new NoPermissionException("You are trying to access details which you are not authorized");
+			throw new NoPermissionException("You are trying to access details which you are not owner");
 		}
 	}
 
