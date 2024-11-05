@@ -61,11 +61,16 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        if (request.getRequestURI().equals("/login")) {
-            return true;
-        } else {
-            return false;
-        }
+        System.out.println("called should not filter : "
+                + (request.getRequestURI().equals("/login") || request.getRequestURI().matches("/h2-console/*")));
+        return (request.getRequestURI().equals("/login") || request.getRequestURI().contains("h2-console")
+                || request.getRequestURI().matches("/h2Console/*"));
+        // if (request.getRequestURI().equals("/login") ||
+        // request.getRequestURI().matches("/h2-console/*")) {
+        // return true;
+        // } else {
+        // return false;
+        // }
     }
 
     // private List<GrantedAuthority> getAuthorities(String roles) {

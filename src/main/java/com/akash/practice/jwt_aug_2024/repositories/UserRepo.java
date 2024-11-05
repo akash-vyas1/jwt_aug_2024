@@ -19,4 +19,8 @@ public interface UserRepo extends JpaRepository<HumanBeing, Integer> {
 
     boolean existsByEmail(String email);
 
+    void deleteAllByEmail(String email);
+
+    // Integer getUniqueIdFromEmail(String email);
+
 }

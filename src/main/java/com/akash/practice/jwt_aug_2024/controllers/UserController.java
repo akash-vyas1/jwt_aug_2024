@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +22,9 @@ import com.akash.practice.jwt_aug_2024.models.HumanBeing;
 import com.akash.practice.jwt_aug_2024.repositories.UserRepo;
 // import com.akash.practice.jwt_aug_2024.repositories.UserRepo;
 import com.akash.practice.jwt_aug_2024.services.UserService;
+import com.akash.practice.jwt_aug_2024.utilities.exceptionHandling.UserNotAuthenticatedException;
+
+import jakarta.transaction.Transactional;
 
 @RestController
 @RequestMapping("/users")
@@ -47,6 +52,21 @@ public class UserController {
 	public ResponseEntity<Object> addUser(@RequestBody HumanBeing user) throws RoleNotFoundException {
 		return userService.saveUser(user);
 	}
+
+	// @DeleteMapping
+	// @Transactional
+	// public ResponseEntity<Object> deleteUser() throws
+	// UserNotAuthenticatedException {
+	// Authentication authentication =
+	// SecurityContextHolder.getContext().getAuthentication();
+	// if (authentication.isAuthenticated()) {
+	// String email = authentication.getPrincipal().toString();
+	// System.out.println("Email is : " + email);
+	// return userService.deleteUser(email);
+	// } else {
+	// throw new UserNotAuthenticatedException("You are not authenticated");
+	// }
+	// }
 
 	@PutMapping
 	ResponseEntity<Object> editUser(@RequestBody HumanBeing user) throws RoleNotFoundException, NoPermissionException {

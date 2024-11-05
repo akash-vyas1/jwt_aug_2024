@@ -6,12 +6,15 @@ import javax.management.relation.RoleNotFoundException;
 
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.akash.practice.jwt_aug_2024.models.HumanBeing;
 import com.akash.practice.jwt_aug_2024.repositories.UserRepo;
 import com.akash.practice.jwt_aug_2024.utilities.UniqueId;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
@@ -97,5 +100,16 @@ public class UserService {
         // String matching = tempUser.getEqualAnswer();
         // System.out.println("from save User : " + tempUser.getEqualAnswer());
         return ResponseEntity.ok(userRepo.save(tempUser));
+    }
+
+    @Transactional
+    public ResponseEntity<Object> deleteUser(String email) {
+        System.out.println("deleting user : ");
+        HumanBeing user = userRepo.findByEmail(email).get();
+        System.out.println("Unique Id : " + user.getUniqueId());
+        // userRepo.delete(user);
+        userRepo.deleteAllByEmail(email);
+        System.out.println("We are deleting user with unique Id : " + userRepo.findByEmail(email).get().getUniqueId());
+        return ResponseEntity.status(HttpStatus.OK).body("Your details deleted");
     }
 }

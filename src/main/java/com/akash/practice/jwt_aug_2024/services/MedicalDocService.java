@@ -1,14 +1,18 @@
 package com.akash.practice.jwt_aug_2024.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.akash.practice.jwt_aug_2024.models.HumanBeing;
 import com.akash.practice.jwt_aug_2024.models.MedicalDoc;
 import com.akash.practice.jwt_aug_2024.repositories.MedicalDocRepo;
 import com.akash.practice.jwt_aug_2024.repositories.UserRepo;
@@ -19,14 +23,12 @@ public class MedicalDocService {
 
     // @Autowired
 
-    UserService userService;
     // @Autowired
     MedicalDocRepo medicalDocRepo;
 
     UserRepo userRepo;
 
-    public MedicalDocService(UserService userService, MedicalDocRepo medicalDocRepo, UserRepo userRepo) {
-        this.userService = userService;
+    public MedicalDocService(MedicalDocRepo medicalDocRepo, UserRepo userRepo) {
         this.medicalDocRepo = medicalDocRepo;
         this.userRepo = userRepo;
     }
@@ -99,6 +101,27 @@ public class MedicalDocService {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Medical document with id " + medicalDoc.getUniqueId() + " is not available.");
+        }
+    }
+
+    public ResponseEntity<Object> deleteMedicalDoc(int id) {
+        Optional<MedicalDoc> document = medicalDocRepo.findByUniqueId(id);
+        if (document.isPresent()) {
+            int creator = document.get().getDoctorId();
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth.isAuthenticated()) {
+                HumanBeing current = userRepo.findByEmail(auth.getPrincipal().toString()).get();
+                if (creator == current.getUniqueId()) {
+                    medicalDocRepo.deleteById(id);
+                    return ResponseEntity.status(HttpStatus.OK).body("document deleted successfully");
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are not creator of this document");
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user not authenticated");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Document not found");
         }
     }
 
