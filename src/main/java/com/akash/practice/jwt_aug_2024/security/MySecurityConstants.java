@@ -25,7 +25,7 @@ public class MySecurityConstants {
         return key;
     }
 
-    private static int jwtTokenValidityTime1 = 1000 * 60 * 2; //
+    private static int jwtTokenValidityTime1 = 1000 * 60 * 10; //
     // 1 second * 1 minutes * 30 minutes
 
     public static void setJwtTokenValidityTime(int minutes) {

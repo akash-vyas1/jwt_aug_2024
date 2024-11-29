@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,6 +20,7 @@ import com.akash.practice.jwt_aug_2024.repositories.MedicalDocRepo;
 import com.akash.practice.jwt_aug_2024.repositories.UserRepo;
 import com.akash.practice.jwt_aug_2024.utilities.UniqueId;
 
+// @PropertySource("classpath:application-dev.properties")
 @Service
 public class MedicalDocService {
 
@@ -25,6 +28,8 @@ public class MedicalDocService {
 
     // @Autowired
     MedicalDocRepo medicalDocRepo;
+    @Value("${serverLocation}")
+    String serverLocation;
 
     UserRepo userRepo;
 
@@ -38,10 +43,13 @@ public class MedicalDocService {
         // System.out.println(medicalDocs.get(docId));
         if (medicalDocRepo.existsByUniqueId(docId)) {
             // return medicalDocRepo.findById(docId).get();
-            return ResponseEntity.ok(medicalDocRepo.findByUniqueId(docId).get());
+            return ResponseEntity
+                    .ok(medicalDocRepo.findByUniqueId(docId).get().toString() + "\nservers are located in "
+                            + serverLocation);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Medical document with id " + docId + " is not available.");
+                    .body("Medical document with id " + docId + " is not available." + "\nservers are located in "
+                            + serverLocation);
         }
         // return null;
     }
